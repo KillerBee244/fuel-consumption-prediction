@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request
 import numpy as np
 import pandas as pd
@@ -8,7 +9,7 @@ from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 app = Flask(__name__)
 
 # Load and preprocess data
-df = pd.read_csv('auto_mpg.csv')
+df = pd.read_csv('/path/to/auto-mpg.csv')  # Ensure the path is correct
 df['horsepower'] = pd.to_numeric(df['horsepower'], errors='coerce')
 df = df.dropna()
 df = df.drop(columns=['car name'])
@@ -59,10 +60,10 @@ def index():
         # Calculate performance metrics
         r2, rmse, mae, nse = calculate_metrics(y_train, y_pred_train)
         
-        # Render result without plot
+        # Render result
         return render_template('result.html', y_pred=y_pred, r2=r2, rmse=rmse, mae=mae, nse=nse)
     
     return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))
